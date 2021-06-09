@@ -1,24 +1,32 @@
-function printVehicle(response,indexTruck){
+function printVehicle(response){
+  document.getElementById("caserneInfo").innerHTML = "Caserne : "+caserneId;
   if(indexMax==0){
-    document.getElementsByClassName("slideshow-container").innerHTML = "Pas de camion";
-  } else {
+    document.getElementById("nbCamion").innerHTML = "Pas de camion";
+    document.getElementById("slideshow-container").style.display ="none"
+  } else if(indexTruck<indexMax && indexTruck>=0) {
+    var deleteArray = new Array(0);
     for(c of response){
-      if(c.facilityRefId != caserneId){
-        console.log(response);
-        c.delete;
+      if(c.facilityRefID != caserneId){
+        deleteArray.push(c);
       }
     }
+    for(c of deleteArray){
+      var pos = response.indexOf(c);
+      response.splice(pos, 1);
+    }
+    document.getElementById("slideshow-container").style.display ="block"
+    document.getElementById("nbCamion").innerHTML = "Nombre de Véhicule : "+response.length;
     w3.displayObject("truckInfo",response[indexTruck]);
-  }
+  } 
 }
 
-function slide(indexTruck){
+function slide(){
   let context = {
       method : 'GET'
     };
   fetch("http://localhost:8080/access/sim/vehicle", context)
   .then(response => response.json())
-  .then(response => printVehicle(response,indexTruck))
+  .then(response => printVehicle(response))
   .catch(error => alert("Erreur : " + error));
 }
 
@@ -35,7 +43,7 @@ function getParameterByName(name)
  return decodeURIComponent(results[1].replace("/+/g", ));
 }
 
-caserneId = parseInt(getParameterByName("caserneId"));
+var caserneId = parseInt(getParameterByName("caserneId"));
 
 function nbVehicleCaserne(){
   let context = {
@@ -46,15 +54,34 @@ function nbVehicleCaserne(){
   .then(response => callbackNbVehicleCaserne(response))
   .catch(error => alert("Erreur : " + error));
 }
-function callbackNbVehicleCaserne(rsponse){
-  return response.length;
+function callbackNbVehicleCaserne(response){
+  var deleteArray = new Array(0);
+  for(c of response){
+    if(c.facilityRefID != caserneId){
+      deleteArray.push(c);
+    }
+  }
+  for(c of deleteArray){
+    var pos = response.indexOf(c);
+    response.splice(pos, 1);
+  }
+  indexMax= response.length;
 }
 
 function plusSlides(i){
-  slide(indexTruck+=i)
+  indexTruck+=i
+  if(indexTruck>=indexMax && i==1 ){
+    indexTruck = 0;
+  } else if (indexTruck<0 && i==-1){
+    indexTruck=indexMax-1;
+  }
+  slide()
 }
 
-indexMax = nbVehicleCaserne()-1;
-indexTruck = 0;
-slide(indexTruck);
+var indexMax;
+nbVehicleCaserne();
+var indexTruck = 0;
+slide();
+
+
 

@@ -22,6 +22,7 @@ var fireIcon = L.icon({
 
 
 var listMarkerFire = new Array(0);
+var listMarkerVehicle = new Array(0);
 
 var HauteIntensite = new L.LayerGroup();
 var FaibleIntensite = new L.LayerGroup();
@@ -37,7 +38,12 @@ var catE_Electric = new L.LayerGroup();
 
 
 
-
+var voiture = new L.LayerGroup();
+var citerne = new L.LayerGroup();
+var pompes = new L.LayerGroup();
+var camion = new L.LayerGroup();
+var echelle = new L.LayerGroup();
+var secours = new L.LayerGroup();
 
 function getFire(){
   setInterval(function(){
@@ -55,8 +61,19 @@ function getFire(){
 function callbackFire(value){
   for(m of listMarkerFire){
     mymap.removeLayer(m);
+    HauteIntensite.removeLayer(m);
+    FaibleIntensite.removeLayer(m);
+    GrandeEtendue.removeLayer(m);
+    FaibleEtendue.removeLayer(m);
+    catA.removeLayer(m);
+    catB_Gasoline.removeLayer(m);
+    catB_Alcohol.removeLayer(m);
+    catB_Plastics.removeLayer(m);
+    catC_Flammable_Gases.removeLayer(m);
+    catD_Metals.removeLayer(m);
+    catE_Electric.removeLayer(m);
   }
-  listMarkerFire = [];
+  listMarkerFire = new Array(0);
   for(let elt in value){
 
     if (value[elt]["intensity"] > 30){
@@ -172,168 +189,145 @@ var camionIcon = L.icon({
 
 
 
-function getSecours(){
-  
-    let context = {
-      method : 'GET'
-    };
-    fetch("http://localhost:8080/access/sim/vehicle", context)
-    .then(response => response.json())
-    .then(response => callbackSecour(response))
-    .catch(error => alert("Erreur : " + error));
-  
-  
+
+
+
+
+
+
+
+function getVehicle(){
+  setInterval(function(){
+let context = {
+  method : 'GET'
+};
+fetch("http://localhost:8080/access/sim/vehicle", context)
+.then(response => response.json())
+  .then(response => callbackVehicle(response))
+  .catch(error => alert("Erreur : " + error));
+},
+200);
+
+
 }
 
-function callbackSecour(response){
-  
-  for (let vehicule in response){
-      
-    if (response[vehicule]["type"] == 'SECOURS'){
-      
-      
-    L.marker([response[vehicule]["lat"], response[vehicule]["lon"]], {icon: vehicleIcon}).addTo(mymap)
-    .bindPopup('Vehicule ' + response[vehicule]["id"] + response[vehicule]["type"]);
-    
+function callbackVehicle(response){
+  for(v of listMarkerVehicle){
+    mymap.removeLayer(v);
+    voiture.removeLayer(v);
+    camion.removeLayer(v);
+    secours.removeLayer(v);
+    citerne.removeLayer(v);
+    pompes.removeLayer(v);
+    echelle.removeLayer(v);
   }
-}
-}
+  listMarkerVehicle = new Array(0);
 
+for (let vehicule in response){
 
-function getCar(){
-  
-  let context = {
-    method : 'GET'
-  };
-  fetch("http://localhost:8080/access/sim/vehicle", context)
-  .then(response => response.json())
-    .then(response => callbackCar(response))
-    .catch(error => alert("Erreur : " + error));
-
-
-}
-
-function callbackCar(response){
-  
-  for (let vehicule in response){
-      
-    if (response[vehicule]["type"] == 'CAR'){
-      
-      
-    L.marker([response[vehicule]["lat"], response[vehicule]["lon"]], {icon: vehicleIcon}).addTo(mymap)
-    .bindPopup('Vehicule ' + response[vehicule]["id"] + response[vehicule]["type"]);
     
+  if (response[vehicule]["type"] == 'CAR'){
+    marker = L.marker([response[vehicule]["lat"],response[vehicule]["lon"]], {icon: vehicleIcon}).addTo(voiture).bindPopup('Vehicule ' + response[vehicule]["id"] + response[vehicule]["type"]) ;
+    listMarkerVehicle.push(marker);
   }
-}
-}
 
+  else if (response[vehicule]["type"] == 'TRUCK'){
 
-function getPompes(){
-  
-  let context = {
-    method : 'GET'
-  };
-  fetch("http://localhost:8080/access/sim/vehicle", context)
-  .then(response => response.json())
-    .then(response => callbackPompes(response))
-    .catch(error => alert("Erreur : " + error));
-
-
-}
-
-function callbackPompes(response){
-
-for (let vehicule in response){
-    
-  if (response[vehicule]["type"] == 'POMPES'){
-    
-    
-  L.marker([response[vehicule]["lat"], response[vehicule]["lon"]], {icon: pompesIcon}).addTo(mymap)
-  .bindPopup('Vehicule ' + response[vehicule]["id"] + response[vehicule]["type"]);
-  
-}
-}
-}
-
-function getCiterne(){
-  
-  let context = {
-    method : 'GET'
-  };
-  fetch("http://localhost:8080/access/sim/vehicle", context)
-  .then(response => response.json())
-    .then(response => callbackCiterne(response))
-    .catch(error => alert("Erreur : " + error));
-
-
-}
-
-function callbackCiterne(response){
-
-for (let vehicule in response){
-    
-  if (response[vehicule]["type"] == 'CITERNE'){
-    
-    
-  L.marker([response[vehicule]["lat"], response[vehicule]["lon"]], {icon: citerneIcon}).addTo(mymap)
-  .bindPopup('Vehicule ' + response[vehicule]["id"] + response[vehicule]["type"]);
-  
-}
-}
-}
-
-function getEchelle(){
-  
-  let context = {
-    method : 'GET'
-  };
-  fetch("http://localhost:8080/access/sim/vehicle", context)
-  .then(response => response.json())
-    .then(response => callbackEchelle(response))
-    .catch(error => alert("Erreur : " + error));
-
-
-}
-
-function callbackEchelle(response){
-
-for (let vehicule in response){
-    
-  if (response[vehicule]["type"] == 'ECHELLE'){
-    
-    
-  L.marker([response[vehicule]["lat"], response[vehicule]["lon"]], {icon: echelleIcon}).addTo(mymap)
-  .bindPopup('Vehicule ' + response[vehicule]["id"] + response[vehicule]["type"]);
-  
-}
-}
-}
-
-function getCamion(){
-  
-  let context = {
-    method : 'GET'
-  };
-  fetch("http://localhost:8080/access/sim/vehicle", context)
-  .then(response => response.json())
-    .then(response => callbackSecour(response))
-    .catch(error => alert("Erreur : " + error));
-
-
-}
-
-function callbackCamion(response){
-
-for (let vehicule in response){
-    
-  if (response[vehicule]["type"] == 'CAMION'){
-    
-    
-  L.marker([response[vehicule]["lat"], response[vehicule]["lon"]], {icon: camionIcon}).addTo(mymap)
-  .bindPopup('Vehicule ' + response[vehicule]["id"] + response[vehicule]["type"]);
+    marker = L.marker([response[vehicule]["lat"],response[vehicule]["lon"]], {icon: camionIcon}).addTo(camion).bindPopup('Vehicule ' + response[vehicule]["id"] + response[vehicule]["type"]) ;
+    listMarkerVehicle.push(marker);
   }
+
+  else if (response[vehicule]["type"] == 'FIRE_ENGINE'){
+    
+    marker = L.marker([response[vehicule]["lat"],response[vehicule]["lon"]], {icon: secourIcon}).addTo(secours).bindPopup('Vehicule ' + response[vehicule]["id"] + response[vehicule]["type"]) ; 
+    listMarkerVehicle.push(marker);
+  //L.marker([response[vehicule]["lat"], response[vehicule]["lon"]], {icon: vehicleIcon}).addTo(mymap)
+  //.bindPopup('Vehicule ' + response[vehicule]["id"] + response[vehicule]["type"]);
   
+  }
+  else if (response[vehicule]["type"] == 'WATER_TENDER'){
+  
+    marker = L.marker([response[vehicule]["lat"],response[vehicule]["lon"]], {icon: citerneIcon}).addTo(citerne).bindPopup('Vehicule ' + response[vehicule]["id"] + response[vehicule]["type"]) ;
+    listMarkerVehicle.push(marker);
+  }
+
+  else if (response[vehicule]["type"] == 'PUMPER_TRUCK'){
+
+    marker = L.marker([response[vehicule]["lat"],response[vehicule]["lon"]], {icon: pompesIcon}).addTo(pompes).bindPopup('Vehicule ' + response[vehicule]["id"] + response[vehicule]["type"]) ; 
+    listMarkerVehicle.push(marker);
+  } 
+  else if (response[vehicule]["type"] == 'TURNTABLE_LADDER_TRUCK'){
+  
+    marker = L.marker([response[vehicule]["lat"],response[vehicule]["lon"]], {icon: echelleIcon}).addTo(echelle).bindPopup('Vehicule ' + response[vehicule]["id"] + response[vehicule]["type"]) ; 
+    listMarkerVehicle.push(marker);
+//L.marker([response[vehicule]["lat"], response[vehicule]["lon"]], {icon: echelleIcon}).addTo(mymap)
+//.bindPopup('Vehicule ' + response[vehicule]["id"] + response[vehicule]["type"]);
+
+  }
+
+  }
+
 }
+
+
+function submitAdd(){
+  var selectBoxType = document.getElementById("type");
+  var selectedValueType = selectBoxType.options[selectBoxType.selectedIndex].value;
+  var selectBoxCaserne = document.getElementById("caserne");
+  var selectedValueCaserne = selectBoxCaserne.options[selectBoxCaserne.selectedIndex].value;
+  
+  fetch("http://localhost:8080/access/sim/vehicle",
+  {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: "POST",
+      body: JSON.stringify({lon: 4.86,
+        lat: 50,
+        type: selectedValueType,
+        efficiency: 10.0,
+        liquidType: "WATER",
+        liquidQuantity: 100.0,
+        liquidConsumption: 1.0,
+        fuel: 100.0,
+        fuelConsumption: 10.0,
+        crewMember: 8,
+        crewMemberCapacity: 8,
+        facilityRefID: selectedValueCaserne})
+  })
+  .then(function(res){ console.log(res) })
+  .catch(function(res){ console.log(res) })
+}
+
+function addCar(){
+  var selectBoxType = document.getElementById("type");
+  var selectedValueType = selectBoxType.options[selectBoxType.selectedIndex].value;
+  var selectBoxCaserne = document.getElementById("caserne");
+  var selectedValueCaserne = selectBoxCaserne.options[selectBoxCaserne.selectedIndex].value;
+  
+  fetch("http://localhost:8080/access/sim/vehicle",
+  {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: "POST",
+      body: JSON.stringify({lon: 4.86,
+        lat: 50,
+        type: selectedValueType,
+        efficiency: 10.0,
+        liquidType: "WATER",
+        liquidQuantity: 100.0,
+        liquidConsumption: 1.0,
+        fuel: 100.0,
+        fuelConsumption: 10.0,
+        crewMember: 8,
+        crewMemberCapacity: 8,
+        facilityRefID: selectedValueCaserne})
+  })
+  .then(function(res){ console.log(res) })
+  .catch(function(res){ console.log(res) })
 }
 
 
@@ -360,7 +354,39 @@ var overlays = {
 
 L.control.layers(baseLayers, overlays, {collapsed :false}).addTo(mymap);
 
+var baseLayers2 = {};
+var overlays2 = {
+"Voiture" : voiture,
+"Secours" : secours,
+"Pompes" : pompes,
+"Citerne" : citerne,
+"Echelle" : echelle,
+"Camion" : camion,
 
+};
+
+
+L.control.layers(baseLayers2, overlays2, {collapsed :false}).addTo(mymap);
+
+
+
+
+
+
+
+
+
+function getCaserne(){
+  let context = {
+    method : 'GET'
+  };
+  fetch("http://localhost:8080/access/mgn/caserne", context)
+  .then(response => response.json())
+  .then(response => callbackCaserne(response))
+ .catch(error => alert("Erreur : " + error));
+
+
+}
 
 
 
@@ -368,47 +394,76 @@ var marker;
 
 
 function callbackCaserne(response) {
-console.log(response);
-
   for(c in response){
-
     var circle = L.circle([response[c]["lat"],response[c]["lon"]], {
-
         color: 'blue',
-
         fillColor: 'blue',
-
         fillOpacity: 0.1,
-
         radius: 5000
-
     }).addTo(mymap);
-
     
 
     marker = L.marker([response[c]["lat"],response[c]["lon"]],{
-
       color: 'blue',
-
     }).addTo(mymap)
-
-    .bindPopup('<iframe id="caserne" src= "./caserneInterface.html?caserneId='+c.idCaserne+'" height="500" </iframe>');
-
+    .bindPopup('<iframe id="caserne" src= "./caserneInterface.html?caserneId='+response[c]["id"]+'" height="500" </iframe>');
   }
+
+  var selectBox = document.querySelectorAll("#caserne");
+  for(e of selectBox){
+    for(c in response){
+    var option = document.createElement('option');
+    option.value = response[c]["id"];
+    option.appendChild( document.createTextNode(""+response[c]["id"]) );
+    e.appendChild(option);
+  }
+  }
+ 
         
 }
-function getCaserne(){
+
+function submitDelete(){
+  var selectBoxVehicle = document.getElementById("vehicule");
+  var selectedValueVehicle = selectBoxVehicle.options[selectBoxVehicle.selectedIndex].value;
+  fetch("http://localhost:8080/access/sim/vehicle/"+selectedValueVehicle,
+  {
+      method: "DELETE",
+  })
+  .then(function(res){ console.log(res) })
+  .catch(function(res){ console.log(res) })
+}
+function changeFunc(){
   let context = {
     method : 'GET'
   };
-  fetch("http://localhost:8080/access/mgn/caserne", context)
-  .then(response  => response.json())
-  .then(response => callbackCaserne(response))
+  fetch("http://localhost:8080/access/sim/vehicle", context)
+  .then(response => response.json())
+  .then(response => callbackChange(response))
   .catch(error => alert("Erreur : " + error));
-  
+}
+
+var option;
+var optionList= new Array(0);
+
+function callbackChange(response){
+  console.log(response)
+  var selectBox = document.getElementById("vehicule");
+  var selectBoxCaserne = document.querySelectorAll("#caserne");
+  optionList= new Array(0);
+  var selectedValueCaserne = selectBoxCaserne[1].options[selectBoxCaserne[1].selectedIndex].value;
+  for(c in response){
+    if(response[c]["facilityRefID"] == selectedValueCaserne){
+      option = document.createElement('option');
+      option.value = response[c]["id"];
+      option.appendChild( document.createTextNode(""+response[c]["id"]) );
+      selectBox.appendChild(option);
+      optionList.push(option);
+    }
+  }
 }
 
 
 
 getFire();
 getCaserne();
+getVehicle();

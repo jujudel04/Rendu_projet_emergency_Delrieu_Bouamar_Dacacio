@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fr">
+
+<head>  
+  <!-- Mise en place du template css de leaflet-->  
+  <meta charset="utf-8"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+  integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+  crossorigin=""/>
+
+  <!-- Mise en place du template JS de leaflet-->
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+  integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+  crossorigin=""></script>
+
+
+  <style>#mapid { height: 750px; }</style>
+  <title>map></title>
+</head>
+
+
+<!-------------------------------------------------------------------------------------------------------------------------------------------->
+
+
+
+
+
+<body id="body">
+
+  <!--interface de création de véhicule------------------------------------------------------------------------------------------------------------------------------------------>
+
+
+  <button type="button" onclick=getCar() >Créer une voiture </button>
+  <button type="button" onclick=getSecours()>Créer un véhicule de secours </button>
+  <button type="button" onclick=getPompes()>Créer un fourgon de pompe</button>
+  <button type="button" onclick=getCiterne()>Créer un camion citerne </button>
+  <button type="button" onclick=getEchelle()>Créer un camion echelle</button>
+  <button type="button" onclick=getCamion()>Créer un camion </button>
+    
+  <div id="mapid"></div>
+
+
+</body>
+<script src="map.js"></script>
